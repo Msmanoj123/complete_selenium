@@ -6,7 +6,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.interactions.Actions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import org.testng.annotations.*;
 
@@ -29,16 +29,15 @@ public class T1 {
         prop.load(fis);
     }
     @BeforeMethod
-    public void Test_setup()
-    {
+    public void Test_setup() throws IOException {
         WebDriverManager.chromedriver().setup();
         ChromeOptions ch = new ChromeOptions();
         ch.addArguments("--remote-allow-origins=*");
         driver = new ChromeDriver(ch);
         driver.get(prop.getProperty("url"));
         driver.manage().window().maximize();
-        pom = new pomTestNG(driver);
          wait = new WebDriverWait(driver, Duration.ofMinutes(2));
+        pom = new pomTestNG(driver,wait);
     }
     @Test(enabled = false)
     void generating_src_of_brands()
@@ -49,6 +48,13 @@ public class T1 {
             String src = driver.findElements(By.cssSelector("#carousel0:nth-child(1)>div>div>img")).get(i).getAttribute("src");
             System.out.println(src);
         }
+    }
+    @Test
+    public void add_item_cart() throws InterruptedException {
+        Actions actions = new Actions(driver);
+        actions.moveToElement(pom.desktops).build().perform();
+        actions.moveToElement(pom.alldesktops).click().build().perform();
+        pom.validate();
     }
     @AfterMethod
     public void Test_teardown()
